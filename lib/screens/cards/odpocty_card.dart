@@ -312,7 +312,42 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     );
   }
 
+  /// Po zaskrtnuti "Zmena meradla" vycisti hlavne pole hodnoty, aby pri ulozeni
+  /// mohla prebehnut automaticka kopia zo startovacej hodnoty (_applyStartAsValueIfEmpty).
+  void _handleChangeToggle(
+    bool? checked,
+    TextEditingController valueCtrl,
+    void Function(bool) setChange,
+  ) {
+    final v = checked ?? false;
+    setState(() {
+      setChange(v);
+      if (v) {
+        valueCtrl.clear();
+      }
+    });
+  }
+
+  /// Pri zmene meradla, ak je hlavne pole prazdne, pouzije sa startovacia hodnota
+  /// noveho meradla ako hodnota hlavneho pola (prve odcitanie == start noveho meradla).
+  /// Ak uzivatel do hlavneho pola nieco zadal (aj 0), nechava sa nezmenene.
+  void _applyStartAsValueIfEmpty(
+    bool change,
+    TextEditingController valueCtrl,
+    TextEditingController startCtrl,
+  ) {
+    if (change &&
+        valueCtrl.text.trim().isEmpty &&
+        startCtrl.text.trim().isNotEmpty) {
+      valueCtrl.text = startCtrl.text.trim();
+    }
+  }
+
   Future<void> _save() async {
+    _applyStartAsValueIfEmpty(_plnChange, _plnValue, _plnStart);
+    _applyStartAsValueIfEmpty(_eleChange, _eleValue, _eleStart);
+    _applyStartAsValueIfEmpty(_vodChange, _vodValue, _vodStart);
+
     final plnVal = _parse(_plnValue);
     final eleVal = _parse(_eleValue);
     final vodVal = _parse(_vodValue);
@@ -520,18 +555,21 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Odpocty', style: Theme.of(context).textTheme.titleLarge),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Show notes'),
-                  Checkbox(value: _showAllNotes, onChanged: _toggleAllNotes),
-                ],
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Date', style: Theme.of(context).textTheme.titleLarge),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Show notes'),
+                    Checkbox(value: _showAllNotes, onChanged: _toggleAllNotes),
+                  ],
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           Card(
@@ -550,7 +588,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             focusNode: _plnFocus,
             last: _lastReadings?.pln,
             changeChecked: _plnChange,
-            onChangeToggle: (v) => setState(() => _plnChange = v ?? false),
+            onChangeToggle: (v) =>
+                _handleChangeToggle(v, _plnValue, (c) => _plnChange = c),
             removedCtrl: _plnRemoved,
             startCtrl: _plnStart,
             noteCtrl: _plnNote,
@@ -565,7 +604,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             focusNode: _eleFocus,
             last: _lastReadings?.ele,
             changeChecked: _eleChange,
-            onChangeToggle: (v) => setState(() => _eleChange = v ?? false),
+            onChangeToggle: (v) =>
+                _handleChangeToggle(v, _eleValue, (c) => _eleChange = c),
             removedCtrl: _eleRemoved,
             startCtrl: _eleStart,
             noteCtrl: _eleNote,
@@ -580,7 +620,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             focusNode: _vodFocus,
             last: _lastReadings?.vod,
             changeChecked: _vodChange,
-            onChangeToggle: (v) => setState(() => _vodChange = v ?? false),
+            onChangeToggle: (v) =>
+                _handleChangeToggle(v, _vodValue, (c) => _vodChange = c),
             removedCtrl: _vodRemoved,
             startCtrl: _vodStart,
             noteCtrl: _vodNote,
