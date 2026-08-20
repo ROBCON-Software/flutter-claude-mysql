@@ -63,9 +63,18 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
   @override
   void dispose() {
     for (final c in [
-      _plnValue, _plnRemoved, _plnStart, _plnNote,
-      _eleValue, _eleRemoved, _eleStart, _eleNote,
-      _vodValue, _vodRemoved, _vodStart, _vodNote,
+      _plnValue,
+      _plnRemoved,
+      _plnStart,
+      _plnNote,
+      _eleValue,
+      _eleRemoved,
+      _eleStart,
+      _eleNote,
+      _vodValue,
+      _vodRemoved,
+      _vodStart,
+      _vodNote,
       _commonNote,
     ]) {
       c.dispose();
@@ -91,7 +100,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
 
   String _formatNum(double v) {
     if (v == v.roundToDouble()) return v.toInt().toString();
-    return v.toStringAsFixed(3).replaceFirst(RegExp(r'0+$'), '').replaceFirst(RegExp(r'\.$'), '');
+    return v
+        .toStringAsFixed(3)
+        .replaceFirst(RegExp(r'0+$'), '')
+        .replaceFirst(RegExp(r'\.$'), '');
   }
 
   String _hintFor(MeterLastValue? m) {
@@ -120,7 +132,11 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
   }
 
   /// Reload jedneho pola - vzdy nanovo nacita aktualne data z API (nie z cache).
-  Future<void> _reloadOne(String meter, TextEditingController ctrl, FocusNode focus) async {
+  Future<void> _reloadOne(
+    String meter,
+    TextEditingController ctrl,
+    FocusNode focus,
+  ) async {
     setState(() => _loadingLast = true);
     try {
       final data = await ApiService.fetchLastReadings();
@@ -132,7 +148,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Chyba pri nacitani poslednej hodnoty: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Chyba pri nacitani poslednej hodnoty: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) setState(() => _loadingLast = false);
@@ -150,11 +169,16 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
       _applyRaw(_eleValue, data.ele);
       _applyRaw(_vodValue, data.vod);
       _plnFocus.requestFocus();
-      _plnValue.selection = TextSelection.collapsed(offset: _plnValue.text.length);
+      _plnValue.selection = TextSelection.collapsed(
+        offset: _plnValue.text.length,
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Chyba pri nacitani poslednych hodnot: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Chyba pri nacitani poslednych hodnot: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) setState(() => _loadingLast = false);
@@ -165,9 +189,18 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     setState(() {
       _dateTime = DateTime.now();
       for (final c in [
-        _plnValue, _plnRemoved, _plnStart, _plnNote,
-        _eleValue, _eleRemoved, _eleStart, _eleNote,
-        _vodValue, _vodRemoved, _vodStart, _vodNote,
+        _plnValue,
+        _plnRemoved,
+        _plnStart,
+        _plnNote,
+        _eleValue,
+        _eleRemoved,
+        _eleStart,
+        _eleNote,
+        _vodValue,
+        _vodRemoved,
+        _vodStart,
+        _vodNote,
         _commonNote,
       ]) {
         c.clear();
@@ -224,7 +257,13 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     if (time == null) return;
 
     setState(() {
-      _dateTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      _dateTime = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
     });
   }
 
@@ -246,7 +285,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     return '${two(dt.day)}.${two(dt.month)}.${dt.year} ${two(dt.hour)}:${two(dt.minute)}';
   }
 
-  Future<void> _showValidationErrorDialog(String message, List<String> details) async {
+  Future<void> _showValidationErrorDialog(
+    String message,
+    List<String> details,
+  ) async {
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -261,7 +303,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );
@@ -287,8 +332,14 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
           title: const Text('Mimoriadny odpocet'),
           content: const Text('Niektore meradla nie su vyplnene. Si si isty?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('NIE')),
-            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('ANO')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('NIE'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('ANO'),
+            ),
           ],
         ),
       );
@@ -321,9 +372,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
       _clearAll();
       await _loadLastReadings();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zaznam ulozeny')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Zaznam ulozeny')));
     } on ApiException catch (e) {
       if (!mounted) return;
       if (e.details != null && e.details!.isNotEmpty) {
@@ -337,7 +387,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Chyba pripojenia: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Chyba pripojenia: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -376,7 +429,7 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
                 const SizedBox(
                   width: _checkboxColWidth,
                   child: Text(
-                    'Zmena\nmeradla',
+                    'Zmena',
                     style: TextStyle(fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
@@ -385,7 +438,7 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
                 const SizedBox(
                   width: _checkboxColWidth,
                   child: Text(
-                    'Show\nnotes',
+                    'Note',
                     style: TextStyle(fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
@@ -433,9 +486,15 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             ),
             if (changeChecked) ...[
               const SizedBox(height: 8),
-              MeterField(controller: removedCtrl, labelText: 'Posledna hodnota povodneho meradla'),
+              MeterField(
+                controller: removedCtrl,
+                labelText: 'Posledna hodnota povodneho meradla',
+              ),
               const SizedBox(height: 8),
-              MeterField(controller: startCtrl, labelText: 'Startovacia hodnota noveho meradla'),
+              MeterField(
+                controller: startCtrl,
+                labelText: 'Startovacia hodnota noveho meradla',
+              ),
             ],
             if (showNotes) ...[
               const SizedBox(height: 8),
@@ -496,7 +555,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             startCtrl: _plnStart,
             noteCtrl: _plnNote,
             showNotes: _plnShowNotes,
-            onShowNotesToggle: (v) => setState(() => _plnShowNotes = v ?? false),
+            onShowNotesToggle: (v) =>
+                setState(() => _plnShowNotes = v ?? false),
           ),
           _meterSection(
             meterKey: 'ele',
@@ -510,7 +570,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             startCtrl: _eleStart,
             noteCtrl: _eleNote,
             showNotes: _eleShowNotes,
-            onShowNotesToggle: (v) => setState(() => _eleShowNotes = v ?? false),
+            onShowNotesToggle: (v) =>
+                setState(() => _eleShowNotes = v ?? false),
           ),
           _meterSection(
             meterKey: 'vod',
@@ -524,7 +585,8 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
             startCtrl: _vodStart,
             noteCtrl: _vodNote,
             showNotes: _vodShowNotes,
-            onShowNotesToggle: (v) => setState(() => _vodShowNotes = v ?? false),
+            onShowNotesToggle: (v) =>
+                setState(() => _vodShowNotes = v ?? false),
           ),
           if (_showCommonNote) ...[
             TextField(
@@ -540,7 +602,10 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(onPressed: _clearAll, child: const Text('Clear ALL')),
+                child: OutlinedButton(
+                  onPressed: _clearAll,
+                  child: const Text('Clear ALL'),
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(

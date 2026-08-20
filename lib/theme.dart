@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 /// Material 3 z tejto jednej farby automaticky odvodi cely tonalny system
 /// (AppBar, tlacidla, zvyraznenia, atd.).
 class AppTheme {
-  static const Color seedColor = Color(0xFF6699CC); // jemna modra
+  static const Color seedColor = Color.fromARGB(
+    255,
+    93,
+    221,
+    19,
+  ); // jemna modra
 
   static ThemeData get themeData => ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: seedColor),
-        useMaterial3: true,
-      );
+    colorScheme: ColorScheme.fromSeed(seedColor: seedColor),
+    useMaterial3: true,
+  );
 }
