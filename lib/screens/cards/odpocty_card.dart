@@ -12,6 +12,8 @@ class OdpoctyCard extends StatefulWidget {
 }
 
 class _OdpoctyCardState extends State<OdpoctyCard> {
+  static const double _checkboxColWidth = 52;
+
   DateTime _dateTime = DateTime.now();
 
   final _plnValue = TextEditingController();
@@ -365,8 +367,33 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
           children: [
             Text(title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
+            // Popisky checkboxov nad nimi - samostatny riadok, aby vstupne pole
+            // a oba checkboxy nizsie mohli byt vzajomne presne vertikalne vycentrovane.
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(child: SizedBox.shrink()),
+                const SizedBox(width: 4),
+                const SizedBox(
+                  width: _checkboxColWidth,
+                  child: Text(
+                    'Zmena\nmeradla',
+                    style: TextStyle(fontSize: 11),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const SizedBox(
+                  width: _checkboxColWidth,
+                  child: Text(
+                    'Show\nnotes',
+                    style: TextStyle(fontSize: 11),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: MeterField(
@@ -379,38 +406,28 @@ class _OdpoctyCardState extends State<OdpoctyCard> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Zmena\nmeradla',
-                      style: TextStyle(fontSize: 11),
-                      textAlign: TextAlign.center,
-                    ),
-                    Checkbox(
+                SizedBox(
+                  width: _checkboxColWidth,
+                  child: Center(
+                    child: Checkbox(
                       value: changeChecked,
                       onChanged: onChangeToggle,
                       visualDensity: VisualDensity.compact,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(width: 4),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Show\nnotes',
-                      style: TextStyle(fontSize: 11),
-                      textAlign: TextAlign.center,
-                    ),
-                    Checkbox(
+                SizedBox(
+                  width: _checkboxColWidth,
+                  child: Center(
+                    child: Checkbox(
                       value: showNotes,
                       onChanged: onShowNotesToggle,
                       visualDensity: VisualDensity.compact,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
