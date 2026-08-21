@@ -16,6 +16,14 @@ class MyApp extends StatelessWidget {
       title: 'Meradla',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.themeData,
+      // DÔLEŽITÁ ZMENA: Použitie builder na obalenie celej aplikácie
+      builder: (context, child) {
+        return SafeArea(
+          top: false, // Horná lišta (stavová) môže ostať prekrytá, ak chcete
+          bottom: true, // TOTO JE KĽÚČOVÉ: pridá odsadenie od spodnej lišty
+          child: child ?? Container(),
+        );
+      },
       home: const PinScreen(),
     );
   }
